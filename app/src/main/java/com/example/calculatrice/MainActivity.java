@@ -3,7 +3,6 @@ package com.example.calculatrice;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -17,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     String arg1 = "", arg2 = "";
     String resultat = "";
     String sign = "";
+    String historique = "";
 
     private Button ch0;
     private Button ch1;
@@ -42,9 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private Button egal;
     private ImageButton backspace;
     private HorizontalScrollView scroll;
+    private ScrollView scrollHis;
     private TextView equationTV;
     private TextView result;
-    private TextView historique;
+    private TextView historiqueTV;
     private View.OnClickListener chiffre = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -146,10 +147,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int index = -2;
-                if (! arg1.equals("")) {
+                if (sign.equals("")) {
                     index = arg1.indexOf("-");
                     if (index == -1)
                         arg1 = "-" + arg1;
+                }
+                else {
+                    index = arg2.indexOf("-");
+                    if (index == -1)
+                        arg2 = "-" + arg2;
                 }
                 equation = arg1 + sign + arg2;
 
@@ -170,9 +176,10 @@ public class MainActivity extends AppCompatActivity {
 
         equationTV = findViewById(R.id.equationTV);
         result = findViewById(R.id.result);
-        historique = findViewById(R.id.historique);
+        historiqueTV = findViewById(R.id.historiqueTV);
 
         scroll = findViewById(R.id.scroll);
+        scrollHis = findViewById(R.id.scrollHis);
 
         erase = findViewById(R.id.erase);
         erase.setOnClickListener(new View.OnClickListener() {
@@ -208,10 +215,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (! arg1.equals("")) {
-                    historique.setText(equation);
                     //Call Class service
                     resultat = Double.toString(Service.operation(arg1, sign, arg2));
                     result.setText(resultat);
+                    historique = historique + "\n" + arg1 + sign + arg2 + " = " + resultat;
+                    historiqueTV.setText(historique);
+                    scrollHis.fullScroll(View.FOCUS_DOWN);
+
                     arg1 = "";
                     arg2 = "";
                     sign = "";
